@@ -28,7 +28,7 @@
     "esp32c3_butonlu": {
       "name": "ESP32-C3 Supermini (0.96 OLED + Dokunmatik)",
       "chip": "esp32c3",
-      "display": "oled_buttons",
+      "display": "butonlu",
       "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32c3_butonlu.bin"
     },
     "esp32_oled": {
@@ -46,7 +46,7 @@
     "esp32_butonlu": {
       "name": "ESP32 DevKit v1 Dual-Core (0.96 OLED + Buton)",
       "chip": "esp32",
-      "display": "oled_buttons",
+      "display": "butonlu",
       "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32_butonlu.bin"
     }
   }

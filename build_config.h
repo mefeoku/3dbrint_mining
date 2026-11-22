@@ -5,9 +5,7 @@
 #define BUILD_PROFILE_HEADLESS  2
 #define BUILD_PROFILE_BUTONLU   3
 
-// Otomatik derleme ve senkronizasyon araci (sync_github.py) tarafindan ayarlanir:
-#ifndef CURRENT_BUILD_PROFILE
-#define CURRENT_BUILD_PROFILE   BUILD_PROFILE_OLED
-#endif
+// Otomatik derleme sistemi tarafindan dinamik ayarlanmistir:
+#define CURRENT_BUILD_PROFILE   1
 
 #endif // _BUILD_CONFIG_H_
