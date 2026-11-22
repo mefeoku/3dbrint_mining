@@ -238,7 +238,7 @@ details.cfg summary::-webkit-details-marker{display:none;}
     </summary>
     <div style="margin-top:14px;">
       <p style="font-size:13px;color:#9ca3af;line-height:1.6;margin-bottom:14px;">
-        Cihazlar en son firmware surumunu GitHub reposundan (<strong>mefeoku/NerdMiner_Farm</strong>) otomatik ceker veya manuel olarak <code>.bin</code> dosyasi yukleyebilirsiniz.<br>
+        Cihazlar en son firmware surumunu GitHub reposundan (<strong>mefeoku/3dbrint_mining</strong>) otomatik ceker veya manuel olarak <code>.bin</code> dosyasi yukleyebilirsiniz.<br>
         <strong>Mevcut Farm Surumu:</strong> <span style="color:#f7931a;font-weight:bold;">v2.2.0</span>
       </p>
       <div id="ota-status-box" style="display:none;padding:12px;border-radius:10px;background:#14141c;border:1px solid #2a2a36;font-size:13px;margin-bottom:14px;line-height:1.6;"></div>

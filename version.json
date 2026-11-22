@@ -17,37 +17,37 @@
       "name": "ESP32-C3 Supermini (0.96 OLED)",
       "chip": "esp32c3",
       "display": "oled",
-      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32c3_oled.bin"
+      "url": "https://raw.githubusercontent.com/mefeoku/3dbrint_mining/main/bin/nerdminer_esp32c3_oled.bin"
     },
     "esp32c3_headless": {
       "name": "ESP32-C3 Supermini (Ekransiz / LED)",
       "chip": "esp32c3",
       "display": "headless",
-      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32c3_headless.bin"
+      "url": "https://raw.githubusercontent.com/mefeoku/3dbrint_mining/main/bin/nerdminer_esp32c3_headless.bin"
     },
     "esp32c3_butonlu": {
       "name": "ESP32-C3 Supermini (0.96 OLED + Dokunmatik)",
       "chip": "esp32c3",
       "display": "butonlu",
-      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32c3_butonlu.bin"
+      "url": "https://raw.githubusercontent.com/mefeoku/3dbrint_mining/main/bin/nerdminer_esp32c3_butonlu.bin"
     },
     "esp32_oled": {
       "name": "ESP32 DevKit v1 Dual-Core (0.96 OLED)",
       "chip": "esp32",
       "display": "oled",
-      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32_oled.bin"
+      "url": "https://raw.githubusercontent.com/mefeoku/3dbrint_mining/main/bin/nerdminer_esp32_oled.bin"
     },
     "esp32_headless": {
       "name": "ESP32 DevKit v1 Dual-Core (Ekransiz / LED)",
       "chip": "esp32",
       "display": "headless",
-      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32_headless.bin"
+      "url": "https://raw.githubusercontent.com/mefeoku/3dbrint_mining/main/bin/nerdminer_esp32_headless.bin"
     },
     "esp32_butonlu": {
       "name": "ESP32 DevKit v1 Dual-Core (0.96 OLED + Buton)",
       "chip": "esp32",
       "display": "butonlu",
-      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32_butonlu.bin"
+      "url": "https://raw.githubusercontent.com/mefeoku/3dbrint_mining/main/bin/nerdminer_esp32_butonlu.bin"
     }
   }
 }

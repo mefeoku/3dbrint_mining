@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <WebServer.h>
 
-#define GITHUB_OTA_DEFAULT_REPO "mefeoku/NerdMiner_Farm"
+#define GITHUB_OTA_DEFAULT_REPO "mefeoku/3dbrint_mining"
 #define GITHUB_OTA_BRANCH "main"
 #define GITHUB_OTA_MANIFEST_URL "https://raw.githubusercontent.com/" GITHUB_OTA_DEFAULT_REPO "/" GITHUB_OTA_BRANCH "/version.json"
 

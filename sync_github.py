@@ -190,7 +190,7 @@ def update_version_manifest():
             "name": v["name"],
             "chip": v["chip"],
             "display": v["profile_name"],
-            "url": f"https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_{v['key']}.bin"
+            "url": f"https://raw.githubusercontent.com/mefeoku/3dbrint_mining/main/bin/nerdminer_{v['key']}.bin"
         }
 
     with open(vfile, "w", encoding="utf-8") as f:
@@ -213,7 +213,7 @@ def git_sync_and_push(commit_msg=None):
     res = subprocess.run("git remote -v", shell=True, cwd=BASE_DIR, capture_output=True, text=True)
     if "origin" not in res.stdout:
         print("[!] GitHub 'origin' baglantisi tanimli degil. Ekleniyor...")
-        run_command("git remote add origin https://github.com/mefeoku/NerdMiner_Farm.git", cwd=BASE_DIR)
+        run_command("git remote add origin https://github.com/mefeoku/3dbrint_mining.git", cwd=BASE_DIR)
         run_command("git branch -M main", cwd=BASE_DIR)
 
     print("[*] GitHub'a push ediliyor (git push origin main)...")
@@ -224,7 +224,7 @@ def git_sync_and_push(commit_msg=None):
         print("[BILGI] Git push ciktisi:")
         print(push_res.stdout)
         print(push_res.stderr)
-        print("[IPUCU] Eger repo henuz olusturulmadiysa, https://github.com/new adresinden 'NerdMiner_Farm' adinda bir repo olusturup calistirabilirsiniz.")
+        print("[IPUCU] Eger repo henuz olusturulmadiysa, https://github.com/new adresinden '3dbrint_mining' adinda bir repo olusturup calistirabilirsiniz.")
 
 def main():
     print("""
