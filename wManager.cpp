@@ -362,19 +362,27 @@ void init_WifiManager()
     doLedStuff(0);
 
     if (hasConfig && !forceConfig && savedSsid.length() > 0) {
-        Serial.printf("[BOOT] Baglaniyor: %s\n", savedSsid.c_str());
-        showLoadingProgress("WiFi Baglaniliyor...", 45);
+        Serial.printf("[BOOT] Baglaniyor (1. WiFi): %s\n", savedSsid.c_str());
+        showLoadingProgress("1. WiFi Baglaniliyor...", 45);
         WiFi.persistent(true);
         WiFi.begin(savedSsid.c_str(), savedPass.c_str());
-        if (!waitWifiConnected(14000)) {
-            Serial.println("[BOOT] Kayitli WiFi baglanamadi, ESP-NOW ile 3dbrint.local araniyor...");
-            showLoadingProgress("Farm Araniyor...", 50);
-            if (farmTryEspNowProvision(&Settings, provSsid, provPass, provMasterIp)) {
-                showLoadingProgress("Farm Bulundu!", 60);
-                nvMem.saveConfig(&Settings);
-                WiFi.persistent(true);
-                WiFi.begin(provSsid.c_str(), provPass.c_str());
-                waitWifiConnected(14000);
+        if (!waitWifiConnected(12000)) {
+            if (Settings.WifiSSID2.length() > 0) {
+                Serial.printf("[BOOT] 1. WiFi basarisiz, 2. WiFi deneniyor: %s\n", Settings.WifiSSID2.c_str());
+                showLoadingProgress("2. WiFi Baglaniliyor...", 50);
+                WiFi.begin(Settings.WifiSSID2.c_str(), Settings.WifiPW2.c_str());
+                waitWifiConnected(12000);
+            }
+            if (WiFi.status() != WL_CONNECTED) {
+                Serial.println("[BOOT] Kayitli WiFi aglarina baglanamadi, ESP-NOW ile 3dbrint.local araniyor...");
+                showLoadingProgress("Farm Araniyor...", 55);
+                if (farmTryEspNowProvision(&Settings, provSsid, provPass, provMasterIp)) {
+                    showLoadingProgress("Farm Bulundu!", 65);
+                    nvMem.saveConfig(&Settings);
+                    WiFi.persistent(true);
+                    WiFi.begin(provSsid.c_str(), provPass.c_str());
+                    waitWifiConnected(14000);
+                }
             }
         }
     } else {

@@ -18,7 +18,7 @@ FLASHER_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "NerdMiner_Hizli_Flas
 BIN_OTA_DIR = os.path.join(BASE_DIR, "bin")
 
 ARDUINO_CLI = r"C:\Users\prome\AppData\Local\Programs\Arduino IDE\resources\app\lib\backend\resources\arduino-cli.exe"
-ESPTOOL = sys.executable + " -m esptool"
+ESPTOOL = r"C:\Users\prome\AppData\Local\Arduino15\packages\esp32\tools\esptool_py\5.3.1\esptool.exe"
 
 VARIANTS = [
     {

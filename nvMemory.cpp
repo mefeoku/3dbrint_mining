@@ -40,6 +40,9 @@ bool nvMemory::saveConfig(TSettings* Settings)
         json[JSON_SPIFFS_KEY_DEVNAME] = Settings->DeviceName;
         json[JSON_SPIFFS_KEY_AUTOJOIN] = Settings->farmAutoJoin;
         json[JSON_SPIFFS_KEY_CFGVER] = Settings->farmConfigVer;
+        json[JSON_SPIFFS_KEY_WIFISSID2] = Settings->WifiSSID2;
+        json[JSON_SPIFFS_KEY_WIFIPASS2] = Settings->WifiPW2;
+        json[JSON_SPIFFS_KEY_MAXTEMP] = Settings->MaxTemp;
 
         // Open config file
         File configFile = SPIFFS.open(JSON_CONFIG_FILE, "w");
@@ -125,6 +128,17 @@ bool nvMemory::loadConfig(TSettings* Settings)
                         Settings->farmConfigVer = json[JSON_SPIFFS_KEY_CFGVER].as<uint32_t>();
                     } else {
                         Settings->farmConfigVer = 1;
+                    }
+                    if (json[JSON_SPIFFS_KEY_WIFISSID2] != nullptr) {
+                        Settings->WifiSSID2 = json[JSON_SPIFFS_KEY_WIFISSID2].as<String>();
+                    }
+                    if (json[JSON_SPIFFS_KEY_WIFIPASS2] != nullptr) {
+                        Settings->WifiPW2 = json[JSON_SPIFFS_KEY_WIFIPASS2].as<String>();
+                    }
+                    if (json[JSON_SPIFFS_KEY_MAXTEMP] != nullptr) {
+                        Settings->MaxTemp = json[JSON_SPIFFS_KEY_MAXTEMP].as<int>();
+                    } else {
+                        Settings->MaxTemp = 75;
                     }
                     if (Settings->PoolAddress == "public-pool.io" || Settings->PoolAddress == "pool.nerdminers.org") {
                         Serial.println("Migrating pool to pool.nerdminer.io:3333");

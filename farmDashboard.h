@@ -21,10 +21,11 @@ p{font-size:13px;color:#9ca3af;line-height:1.5;margin-bottom:18px;}
 .btn{display:block;width:100%;background:#f7931a;color:#000;text-decoration:none;font-weight:800;font-size:15px;padding:13px;border-radius:12px;margin-bottom:10px;}
 .btn2{display:block;width:100%;background:#14141c;color:#f3f4f6;border:1px solid #2a2a36;text-decoration:none;font-weight:600;font-size:13px;padding:11px;border-radius:12px;}
 </style>
+<link rel="icon" type="image/png" href="/logo.png">
 </head>
 <body>
 <div class="card">
-  <div class="ico">&#8383;</div>
+  <img src="/logo.png" alt="3d brint" style="width:72px;height:72px;object-fit:contain;margin-bottom:14px;filter:drop-shadow(0 2px 8px rgba(247,147,26,0.2));">
   <h1>Farm Worker Aktif</h1>
   <p>Bu cihaz (<strong>{{DEV_NAME}}</strong>) tek merkezli <strong>3dbrint Farm</strong> agina bagli olarak calisiyor. Tum cihazlari tek panelden yonetmek icin Master panele yonlendiriliyorsunuz...</p>
   <a class="btn" href="http://{{MASTER_IP}}/">Master Panele Git ({{MASTER_IP}})</a>
@@ -40,6 +41,7 @@ static const char FARM_DASHBOARD_HTML[] PROGMEM = R"rawliteral(<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#000000">
+<link rel="icon" type="image/png" href="/logo.png">
 <title>3dbrint Farm Kontrol</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -47,7 +49,7 @@ html,body{background:#000000;color:#f3f4f6;font-family:-apple-system,BlinkMacSys
 .wrap{max-width:1060px;margin:0 auto;}
 .hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:4px 2px 16px;}
 .brand{display:flex;align-items:center;gap:11px;}
-.btc-ico{width:38px;height:38px;border-radius:11px;background:#f7931a;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;flex-shrink:0;}
+.logo-img{width:42px;height:42px;object-fit:contain;background:#0d0d14;border:1px solid #2a2a36;border-radius:11px;padding:3px;flex-shrink:0;}
 .brand h1{font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.3px;}
 .brand span{display:block;font-size:12px;color:#9ca3af;margin-top:2px;}
 .hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -117,10 +119,10 @@ details.cfg summary::-webkit-details-marker{display:none;}
 <div class="wrap">
   <div class="hdr">
     <div class="brand">
-      <div class="btc-ico">&#8383;</div>
+      <img src="/logo.png" class="logo-img" alt="3d brint">
       <div>
         <h1>3dbrint Farm Kontrol</h1>
-        <span>Tek Merkezli ESP32-C3 Madenci Yonetimi</span>
+        <span>Tek Merkezli Madenci Yonetim Paneli</span>
       </div>
     </div>
     <div class="hdr-right">
@@ -173,11 +175,27 @@ details.cfg summary::-webkit-details-marker{display:none;}
 
   <details class="card cfg" id="cfg-box">
     <summary>
-      <span>Havuz &amp; Cuzdan Ayarlari (Tum Farm'a Uygula)</span>
+      <span>Farm Ayarlari (WiFi, Havuz, Cuzdan &amp; Asiri Isinma)</span>
       <span style="font-size:12px;color:#f7931a;">Ac / Kapat &#9662;</span>
     </summary>
     <form onsubmit="return saveFarmConfig(event)">
       <div class="cfg-grid">
+        <div class="fld">
+          <label for="cfg-wifi">1. WiFi Ag Adi (SSID)</label>
+          <input id="cfg-wifi" type="text" maxlength="32" placeholder="Ev_WiFi" oninput="markDirty()">
+        </div>
+        <div class="fld">
+          <label for="cfg-wifipass">1. WiFi Sifresi</label>
+          <input id="cfg-wifipass" type="password" maxlength="64" placeholder="Degistirmek icin girin" oninput="markDirty()">
+        </div>
+        <div class="fld">
+          <label for="cfg-wifi2">2. Yedek WiFi Agi (SSID - Otomatik Yedek)</label>
+          <input id="cfg-wifi2" type="text" maxlength="32" placeholder="Telefon_Hotspot" oninput="markDirty()">
+        </div>
+        <div class="fld">
+          <label for="cfg-wifipass2">2. Yedek WiFi Sifresi</label>
+          <input id="cfg-wifipass2" type="password" maxlength="64" placeholder="Yedek sifre" oninput="markDirty()">
+        </div>
         <div class="fld">
           <label for="cfg-pool">Havuz Adresi (Pool URL)</label>
           <input id="cfg-pool" type="text" maxlength="78" placeholder="pool.nerdminer.io" oninput="markDirty()">
@@ -193,6 +211,10 @@ details.cfg summary::-webkit-details-marker{display:none;}
         <div class="fld">
           <label for="cfg-wallet">BTC Cuzdan Adresi</label>
           <input id="cfg-wallet" type="text" maxlength="78" placeholder="bc1q..." oninput="markDirty()">
+        </div>
+        <div class="fld">
+          <label for="cfg-maxtemp">Asiri Isinma Korumasi (Max &deg;C)</label>
+          <input id="cfg-maxtemp" type="number" min="45" max="90" placeholder="75" oninput="markDirty()">
         </div>
         <div class="fld">
           <label for="cfg-tz">Saat Dilimi (UTC Farki)</label>
@@ -332,7 +354,12 @@ async function saveFarmConfig(ev) {
     poolPass: document.getElementById('cfg-pass').value,
     wallet: document.getElementById('cfg-wallet').value.trim(),
     tz: parseInt(document.getElementById('cfg-tz').value || '3', 10),
-    saveStats: document.getElementById('cfg-stats').checked
+    saveStats: document.getElementById('cfg-stats').checked,
+    wifi: document.getElementById('cfg-wifi').value.trim(),
+    wifiPass: document.getElementById('cfg-wifipass').value,
+    wifi2: document.getElementById('cfg-wifi2').value.trim(),
+    wifiPass2: document.getElementById('cfg-wifipass2').value,
+    maxTemp: parseInt(document.getElementById('cfg-maxtemp').value || '75', 10)
   };
   try {
     var r = await fetch('/api/farm/config', {
@@ -390,6 +417,9 @@ function renderStatus(data) {
     document.getElementById('cfg-wallet').value = c.wallet || '';
     document.getElementById('cfg-tz').value = (c.tz !== undefined) ? c.tz : 3;
     document.getElementById('cfg-stats').checked = !!c.saveStats;
+    if (c.wifi) document.getElementById('cfg-wifi').value = c.wifi;
+    if (c.wifi2) document.getElementById('cfg-wifi2').value = c.wifi2;
+    document.getElementById('cfg-maxtemp').value = c.maxTemp || 75;
     cfgLoaded = true;
   }
 
@@ -404,10 +434,18 @@ function renderStatus(data) {
   var html = '';
   for (var i = 0; i < nodes.length; i++) {
     var n = nodes[i];
-    var stCls = 'st-mine', stTxt = 'Kaziyor';
-    if (!n.online) { stCls = 'st-off'; stTxt = 'Cevrimdisi'; }
-    else if (n.paused) { stCls = 'st-pause'; stTxt = 'Duraklatildi'; }
-    else if (n.state !== 2) { stCls = 'st-conn'; stTxt = 'Baglaniyor'; }
+    var stCls = 'st-conn', stTxt = 'Baglaniyor';
+    if (!n.online) {
+      stCls = 'st-off'; stTxt = 'Cevrimdisi';
+    } else if (n.paused) {
+      if (n.temp && c.maxTemp && n.temp >= c.maxTemp) {
+        stCls = 'st-pause'; stTxt = 'Asiri Isinma (' + n.temp + '\u00B0C)';
+      } else {
+        stCls = 'st-pause'; stTxt = 'Duraklatildi';
+      }
+    } else if (n.state === 2 || (n.hashrate && n.hashrate > 0.1)) {
+      stCls = 'st-mine'; stTxt = 'Kaziyor';
+    }
 
     var roleTag = n.isMaster ? '<span class="tag m">MASTER</span>' : '<span class="tag">WORKER</span>';
     var varTag = '<span class="tag v">' + esc(n.variant || 'ESP32-C3') + '</span>';

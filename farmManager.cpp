@@ -12,6 +12,7 @@
 #include "farmManager.h"
 #include "farmDashboard.h"
 #include "githubOta.h"
+#include "logo_image.h"
 #include "mining.h"
 #include "monitor.h"
 #include "wManager.h"
@@ -120,6 +121,11 @@ struct PendingConfigApply {
   int tz = 3;
   bool saveStats = false;
   uint32_t cfgVer = 1;
+  String wifiSsid;
+  String wifiPass;
+  String wifiSsid2;
+  String wifiPass2;
+  int maxTemp = 75;
 };
 
 static std::mutex g_farmMutex;
@@ -652,6 +658,9 @@ static void handleMasterStatus() {
   cfg["saveStats"] = Settings.saveStats;
   cfg["autoJoin"] = Settings.farmAutoJoin;
   cfg["configVer"] = Settings.farmConfigVer;
+  cfg["wifi"] = Settings.WifiSSID;
+  cfg["wifi2"] = Settings.WifiSSID2;
+  cfg["maxTemp"] = Settings.MaxTemp;
 
   JsonArray arr = doc["nodes"].to<JsonArray>();
 
@@ -816,6 +825,9 @@ static void handleMasterReport() {
   resp["wallet"] = Settings.BtcWallet;
   resp["tz"] = Settings.Timezone;
   resp["saveStats"] = Settings.saveStats;
+  resp["wifi2"] = Settings.WifiSSID2;
+  resp["wifiPass2"] = Settings.WifiPW2;
+  resp["maxTemp"] = Settings.MaxTemp;
 
   if (outCmdId != 0) {
     resp["cmdId"] = outCmdId;
@@ -906,6 +918,29 @@ static void handleMasterConfig() {
   int tz = doc["tz"] | Settings.Timezone;
   bool saveSt = doc["saveStats"] | Settings.saveStats;
 
+  if (doc["wifi"].is<String>()) {
+    String w = doc["wifi"].as<String>();
+    w.trim();
+    if (w.length() > 0) {
+      Settings.WifiSSID = w;
+      if (doc["wifiPass"].is<String>()) {
+        Settings.WifiPW = doc["wifiPass"].as<String>();
+      }
+    }
+  }
+  if (doc["wifi2"].is<String>()) {
+    String w2 = doc["wifi2"].as<String>();
+    w2.trim();
+    Settings.WifiSSID2 = w2;
+    if (doc["wifiPass2"].is<String>()) {
+      Settings.WifiPW2 = doc["wifiPass2"].as<String>();
+    }
+  }
+  if (doc["maxTemp"].is<int>()) {
+    int mt = doc["maxTemp"].as<int>();
+    if (mt >= 40 && mt <= 95) Settings.MaxTemp = mt;
+  }
+
   Settings.PoolAddress = pool;
   Settings.PoolPort = port;
   strlcpy(Settings.PoolPassword, poolPass.c_str(), sizeof(Settings.PoolPassword));
@@ -986,6 +1021,11 @@ static void farmBecomeMaster() {
   g_farmServer->on("/api/farm/cmd", HTTP_POST, handleMasterCmd);
   g_farmServer->on("/api/farm/config", HTTP_POST, handleMasterConfig);
   g_farmServer->on("/api/farm/prune", HTTP_POST, handleMasterPrune);
+  g_farmServer->on("/logo.png", HTTP_GET, []() {
+    if (!g_farmServer) return;
+    g_farmServer->sendHeader(F("Cache-Control"), F("public, max-age=86400"));
+    g_farmServer->send_P(200, "image/png", (const char*)LOGO_PNG, LOGO_PNG_LEN);
+  });
   g_farmServer->onNotFound([]() {
     if (!g_farmServer) return;
     g_farmServer->sendHeader(F("Location"), F("/"), true);
@@ -1016,6 +1056,11 @@ static void farmBecomeWorker(IPAddress masterIp) {
   g_farmServer = new WebServer(80);
   g_farmServer->on("/", HTTP_GET, handleWorkerRoot);
   g_farmServer->on("/api/farm/ping", HTTP_GET, handleApiPing);
+  g_farmServer->on("/logo.png", HTTP_GET, []() {
+    if (!g_farmServer) return;
+    g_farmServer->sendHeader(F("Cache-Control"), F("public, max-age=86400"));
+    g_farmServer->send_P(200, "image/png", (const char*)LOGO_PNG, LOGO_PNG_LEN);
+  });
   g_farmServer->onNotFound(handleWorkerRoot);
   otaRegisterRoutes(g_farmServer);
   g_farmServer->begin();
@@ -1100,6 +1145,9 @@ static void runFarmSyncTask(void* param) {
                   g_pendingCfg.tz = rDoc["tz"] | Settings.Timezone;
                   g_pendingCfg.saveStats = rDoc["saveStats"] | Settings.saveStats;
                   g_pendingCfg.cfgVer = mVer;
+                  g_pendingCfg.wifiSsid2 = rDoc["wifi2"] | Settings.WifiSSID2;
+                  g_pendingCfg.wifiPass2 = rDoc["wifiPass2"] | Settings.WifiPW2;
+                  g_pendingCfg.maxTemp = rDoc["maxTemp"] | Settings.MaxTemp;
                 }
                 if (cid != 0 && cid != g_lastExecCmdId && cmdStr[0] != '\0') {
                   g_queuedLocalCmd.pending = true;
@@ -1196,6 +1244,25 @@ void farmLoop() {
 
   otaCheckPeriodic();
 
+  // Asiri Isinma Korumasi (Otomatik Duraklatma / Soguyunca Devam Etme)
+  static bool s_thermalPaused = false;
+  static uint32_t s_lastThermalCheck = 0;
+  if (now - s_lastThermalCheck >= 3000) {
+    s_lastThermalCheck = now;
+    int curTemp = (int)temperatureRead();
+    int limit = (Settings.MaxTemp >= 40 && Settings.MaxTemp <= 95) ? Settings.MaxTemp : 75;
+
+    if (!s_thermalPaused && curTemp >= limit) {
+      s_thermalPaused = true;
+      is_mining_paused_flag = true;
+      Serial.printf("[THERMAL] ASIRI ISINMA: %d C >= %d C! Madencilik guvenlik icin duraklatildi.\n", curTemp, limit);
+    } else if (s_thermalPaused && curTemp <= (limit - 5)) {
+      s_thermalPaused = false;
+      is_mining_paused_flag = false;
+      Serial.printf("[THERMAL] Sicaklik guvenli seviyeye dustu (%d C <= %d C). Madencilik yeniden baslatildi.\n", curTemp, limit - 5);
+    }
+  }
+
   // Worker -> Master senkronizasyon verilerini SPIFFS / ana loop uzerinde guvenle uygula
   PendingConfigApply cfgCopy;
   QueuedLocalCmd cmdCopy;
@@ -1219,6 +1286,13 @@ void farmLoop() {
     Settings.Timezone = cfgCopy.tz;
     Settings.saveStats = cfgCopy.saveStats;
     Settings.farmConfigVer = cfgCopy.cfgVer;
+    if (cfgCopy.wifiSsid2.length() > 0) {
+      Settings.WifiSSID2 = cfgCopy.wifiSsid2;
+      Settings.WifiPW2 = cfgCopy.wifiPass2;
+    }
+    if (cfgCopy.maxTemp >= 40 && cfgCopy.maxTemp <= 95) {
+      Settings.MaxTemp = cfgCopy.maxTemp;
+    }
     nvMem.saveConfig(&Settings);
     configTime(3600 * Settings.Timezone, 0, "pool.ntp.org", "time.google.com");
     g_stratumReconnectNeeded = true;

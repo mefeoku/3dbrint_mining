@@ -275,11 +275,26 @@ void runStratumWorker(void *name) {
     }
 
     if(WiFi.status() != WL_CONNECTED){
-      // WiFi is disconnected, so reconnect now
+      // WiFi baglantisi koptu -> Once birincil WiFi, baglanamazsa ikincil (yedek) WiFi dene
       mMonitor.NerdStatus = NM_Connecting;
       MiningJobStop(job_pool, s_submition_map);
+      Serial.println("[WIFI] Baglanti koptu. Birincil ag yeniden deneniyor...");
       WiFi.reconnect();
-      vTaskDelay(5000 / portTICK_PERIOD_MS);
+      uint32_t recStart = millis();
+      while (WiFi.status() != WL_CONNECTED && (millis() - recStart) < 8000) {
+        vTaskDelay(250 / portTICK_PERIOD_MS);
+      }
+      if (WiFi.status() != WL_CONNECTED && Settings.WifiSSID2.length() > 0) {
+        Serial.printf("[WIFI] Birincil ag basarisiz, Yedek ag (%s) deneniyor...\n", Settings.WifiSSID2.c_str());
+        WiFi.begin(Settings.WifiSSID2.c_str(), Settings.WifiPW2.c_str());
+        recStart = millis();
+        while (WiFi.status() != WL_CONNECTED && (millis() - recStart) < 10000) {
+          vTaskDelay(250 / portTICK_PERIOD_MS);
+        }
+      }
+      if (WiFi.status() != WL_CONNECTED) {
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+      }
       continue;
     } 
 
@@ -377,6 +392,7 @@ void runStratumWorker(void *name) {
                                           templates++;
                                           job_pool++;
                                           s_working_current_job_id = job_pool & 0xFF; //Terminate current job in thread
+                                          mMonitor.NerdStatus = NM_hashing;
 
                                           last_job_time = millis();
                                           mLastTXtoPool = last_job_time;
