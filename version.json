@@ -1,0 +1,53 @@
+{
+  "version": "2.2.0",
+  "name": "3dbrint Farm v2.2.0",
+  "release_date": "2026-11-22",
+  "release_notes": "Tek merkezli 3dbrint Farm mimarisi, Master 2s LED nabiz kalp atisi, cift cekirdek ESP32 DevKit v1 tam destegi, Zero-Touch ESP-NOW WiFi esleme ve tek tikla GitHub OTA guncellemesi.",
+  "firmware": {
+    "esp32c3_oled": "bin/nerdminer_esp32c3_oled.bin",
+    "esp32c3_headless": "bin/nerdminer_esp32c3_headless.bin",
+    "esp32c3_butonlu": "bin/nerdminer_esp32c3_butonlu.bin",
+    "esp32_oled": "bin/nerdminer_esp32_oled.bin",
+    "esp32_headless": "bin/nerdminer_esp32_headless.bin",
+    "esp32_butonlu": "bin/nerdminer_esp32_butonlu.bin",
+    "default": "bin/nerdminer_esp32c3_headless.bin"
+  },
+  "variants": {
+    "esp32c3_oled": {
+      "name": "ESP32-C3 Supermini (0.96 OLED)",
+      "chip": "esp32c3",
+      "display": "oled",
+      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32c3_oled.bin"
+    },
+    "esp32c3_headless": {
+      "name": "ESP32-C3 Supermini (Ekransiz / LED)",
+      "chip": "esp32c3",
+      "display": "headless",
+      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32c3_headless.bin"
+    },
+    "esp32c3_butonlu": {
+      "name": "ESP32-C3 Supermini (0.96 OLED + Dokunmatik)",
+      "chip": "esp32c3",
+      "display": "oled_buttons",
+      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32c3_butonlu.bin"
+    },
+    "esp32_oled": {
+      "name": "ESP32 DevKit v1 Dual-Core (0.96 OLED)",
+      "chip": "esp32",
+      "display": "oled",
+      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32_oled.bin"
+    },
+    "esp32_headless": {
+      "name": "ESP32 DevKit v1 Dual-Core (Ekransiz / LED)",
+      "chip": "esp32",
+      "display": "headless",
+      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32_headless.bin"
+    },
+    "esp32_butonlu": {
+      "name": "ESP32 DevKit v1 Dual-Core (0.96 OLED + Buton)",
+      "chip": "esp32",
+      "display": "oled_buttons",
+      "url": "https://raw.githubusercontent.com/mefeoku/NerdMiner_Farm/main/bin/nerdminer_esp32_butonlu.bin"
+    }
+  }
+}

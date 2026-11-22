@@ -1,0 +1,12 @@
+# Arduino IDE & Build Temp
+build/
+*.o
+*.d
+*.elf
+*.map
+.arduino/
+
+# System
+Thumbs.db
+Desktop.ini
+.DS_Store
